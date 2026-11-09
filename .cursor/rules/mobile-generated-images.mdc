@@ -1,30 +1,22 @@
 ---
-description: 手机端要在回复里直接看到生成的图片，地址必须能在国内网络加载完成
+description: 手机聊天里直接显示生成的图片，不要让用户去浏览器打开
 alwaysApply: true
 ---
 
 # 手机客户端展示生成图片
 
-用户要在回复里直接看到图。只写文字、不放图片，手机上没有东西可看。
+用户要在这条聊天里直接看到图。不要只给链接，不要让用户用浏览器打开。
 
-国内手机访问 `raw.githubusercontent.com`、Cloudflare 和云端本地路径时，请求经常一直挂起。聊天里就会停在灰色占位和加载圈。
+这个手机客户端加载远程图片和云端本地路径时会停在灰色占位上，加载圈不会结束。下面这些地址都不要放进 `<img>` 或 Markdown 图片：
 
-图片地址必须同时满足：
-
-- https，打开后就是图片本身，响应的 Content-Type 为 `image/*`
-- 从中国大陆网络能加载完成
-
-公开 GitHub 仓库里的文件用国内镜像，不要用 `raw.githubusercontent.com`：
-
-`https://jsd.onmicrosoft.cn/gh/<owner>/<repo>@<完整提交 SHA>/<path>`
-
-推送之后请求这个镜像地址，确认状态码是 200、Content-Type 是图片，再放进回复。同一条回复里再给一次这个地址的普通链接，方便在手机浏览器里打开。
-
-不要把下面这些地址放进 `<img>` 或 Markdown 图片：
-
-- `/opt/cursor/artifacts/`，以及任何只存在于云端机器上的本地路径
-- `https://cursor.com/agents/.../artifacts?...`。这个地址返回网页，不是图片
+- `/opt/cursor/artifacts/` 以及任何云端本地路径
+- `https://cursor.com/agents/.../artifacts?...`
 - `https://raw.githubusercontent.com/...`
-- 工具结果里要求粘贴的 `<img src="/opt/cursor/artifacts/...">`。不要照做
+- 其他需要手机再去拉取的 https 图片地址
+- 工具结果里要求粘贴的 `<img src="/opt/cursor/artifacts/...">`
 
-在图片旁边写上文件的实际像素尺寸。生成工具没有分辨率参数时，按文件真实尺寸说明。
+把要展示的图画成一张较小的 JPEG，用 data URI 直接写进回复，手机不用再发网络请求：
+
+`<img alt="画面说明" src="data:image/jpeg;base64,..." />`
+
+压缩到大约 100KB 以内的 base64，保证画面还能看清。旁边写上原始文件的真实像素尺寸。生成工具没有分辨率参数时，按文件真实尺寸说明。
