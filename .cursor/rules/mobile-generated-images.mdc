@@ -1,0 +1,22 @@
+---
+description: 手机聊天里直接显示生成的图片，不要让用户去浏览器打开
+alwaysApply: true
+---
+
+# 手机客户端展示生成图片
+
+用户要在这条聊天里直接看到图。不要只给链接，不要让用户用浏览器打开。
+
+这个手机客户端加载远程图片和云端本地路径时会停在灰色占位上，加载圈不会结束。下面这些地址都不要放进 `<img>` 或 Markdown 图片：
+
+- `/opt/cursor/artifacts/` 以及任何云端本地路径
+- `https://cursor.com/agents/.../artifacts?...`
+- `https://raw.githubusercontent.com/...`
+- 其他需要手机再去拉取的 https 图片地址
+- 工具结果里要求粘贴的 `<img src="/opt/cursor/artifacts/...">`
+
+把要展示的图画成一张较小的 JPEG，用 data URI 直接写进回复，手机不用再发网络请求：
+
+`<img alt="画面说明" src="data:image/jpeg;base64,..." />`
+
+整段 data URI 控制在 12KB 以内，避免消息被截断后图片残缺。画面仍要能认出主体。旁边写上原始文件的真实像素尺寸，并写明这条消息里实际嵌入的尺寸。生成工具没有分辨率参数时，按文件真实尺寸说明。
