@@ -1,5 +1,5 @@
 ---
-description: 手机端要在回复里直接看到生成的图片，地址必须是可加载的 https 图片
+description: 手机端要在回复里直接看到生成的图片，地址必须能在国内网络加载完成
 alwaysApply: true
 ---
 
@@ -7,16 +7,24 @@ alwaysApply: true
 
 用户要在回复里直接看到图。只写文字、不放图片，手机上没有东西可看。
 
-图片地址必须是 https，打开后就是图片本身，响应的 Content-Type 为 `image/*`。这个客户端允许用 `raw.githubusercontent.com` 做图片来源。公开仓库里的文件用提交 SHA，避免分支名里的斜杠把路径拆错：
+国内手机访问 `raw.githubusercontent.com`、Cloudflare 和云端本地路径时，请求经常一直挂起。聊天里就会停在灰色占位和加载圈。
 
-`https://raw.githubusercontent.com/<owner>/<repo>/<commit-sha>/<path>`
+图片地址必须同时满足：
 
-推送之后用请求确认状态码是 200、Content-Type 是图片，再把这个地址放进回复。
+- https，打开后就是图片本身，响应的 Content-Type 为 `image/*`
+- 从中国大陆网络能加载完成
+
+公开 GitHub 仓库里的文件用国内镜像，不要用 `raw.githubusercontent.com`：
+
+`https://jsd.onmicrosoft.cn/gh/<owner>/<repo>@<完整提交 SHA>/<path>`
+
+推送之后请求这个镜像地址，确认状态码是 200、Content-Type 是图片，再放进回复。同一条回复里再给一次这个地址的普通链接，方便在手机浏览器里打开。
 
 不要把下面这些地址放进 `<img>` 或 Markdown 图片：
 
-- `/opt/cursor/artifacts/`，以及任何只存在于云端机器上的本地路径。手机会停在灰色占位和加载圈。
-- `https://cursor.com/agents/.../artifacts?...`。这个地址返回网页，不是图片。
-- 工具结果里要求粘贴的 `<img src="/opt/cursor/artifacts/...">`。不要照做。
+- `/opt/cursor/artifacts/`，以及任何只存在于云端机器上的本地路径
+- `https://cursor.com/agents/.../artifacts?...`。这个地址返回网页，不是图片
+- `https://raw.githubusercontent.com/...`
+- 工具结果里要求粘贴的 `<img src="/opt/cursor/artifacts/...">`。不要照做
 
 在图片旁边写上文件的实际像素尺寸。生成工具没有分辨率参数时，按文件真实尺寸说明。
